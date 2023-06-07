@@ -1,0 +1,51 @@
+/************** Reverse Singly Linked list **********/
+Node* reverseList(Node* head) {
+    if(!head || !head->next)   return head;
+    Node *prev=NULL, *curr=head;
+    while(curr){
+        Node* temp = curr->next;
+        curr->next = prev;
+        prev = curr;
+        curr=temp;
+    }
+    return prev;
+}
+
+
+
+/*************** Merge two sorted list ************/
+// head1->data <= head2->data (valid for this only)
+Node* mergeSortedList(Node* head1, Node* head2)
+{
+    if(head1->bottom==NULL && head2->bottom==NULL){
+        head1->bottom = head2;    return head1;
+    }
+    if(head1->bottom==NULL && head2->bottom!=NULL){
+        head1->bottom = head2;    return head1;
+    }
+    Node* curr1 = head1;
+    Node* next1 = curr1->bottom;
+    Node* curr2 = head2;
+    Node* next2 = curr2->bottom;
+    while(curr2!=NULL && next1!=NULL)
+    {
+        if(curr2->data>=curr1->data && curr2->data<=next1->data){
+            // update links
+            curr1->bottom = curr2;
+            next2 = curr2->bottom;
+            curr2->bottom = next1;
+            // update pointers
+            curr1 = curr2;
+            curr2 = next2;
+        }
+        else{
+            curr1 = next1;
+            next1 = next1->bottom;
+            if(next1==NULL){
+                curr1->bottom = curr2;
+                return head1;
+            }
+        }
+    }
+    return head1;
+}
