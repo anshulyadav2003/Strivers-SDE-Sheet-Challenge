@@ -1,4 +1,6 @@
-/************** Reverse Singly Linked list **********/
+/********************************            Reverse Singly Linked list           ********************************/
+/********************************************************************************************************************/
+/********************************************************************************************************************/
 Node* reverseList(Node* head) {
     if(!head || !head->next)   return head;
     Node *prev=NULL, *curr=head;
@@ -13,7 +15,10 @@ Node* reverseList(Node* head) {
 
 
 
-/*************** Merge two sorted list ************/
+/************************************      Merge two sorted list      *****************************/
+/********************************************************************************************************************/
+/********************************************************************************************************************/
+
 // head1->data <= head2->data (valid for this only)
 Node* mergeSortedList(Node* head1, Node* head2)
 {
@@ -49,3 +54,105 @@ Node* mergeSortedList(Node* head1, Node* head2)
     }
     return head1;
 }
+
+
+/***********************************************             TRIE for XOR                  ***************************** ***************/
+/*********************************************************************************************************************************/
+/*********************************************************************************************************************************/
+
+class Node{
+public:
+    Node* links[2];
+    bool containsKey(int idx){
+        return links[idx]!=nullptr;
+    }
+    Node* get(int idx){
+        return links[idx];
+    }
+    void put(int idx, Node* node){
+        links[idx] =  node;
+    }
+};
+
+class Trie{
+public:
+    Node* root;
+    Trie(){
+        root = new Node();
+    }
+
+    void insert(int num) {
+        Node* node = root;
+        for(int i=31; i>=0; i--){
+            int bit = ((num>>i) & 1);
+            if(!node->containsKey(bit)){
+                node->put(bit, new Node());
+            }
+            node = node->get(bit);
+        }
+    }
+    
+    int findMaxXOR(int num) {
+        Node* node = root;
+        int currXOR=0;
+        // For every ith bit find its opposite bit if not found then take that same bit.
+        for(int i=31; i>=0; i--){
+            int bit = ((num>>i)&1);
+            if(node->containsKey(!bit)){
+                currXOR = currXOR | (1<<i);
+                node = node->get(!bit);
+            } else{
+                node = node->get(bit);
+            }
+        }
+        return currXOR;
+    }
+
+};
+
+
+
+
+
+/***************************************           MEDIAN FINDER              *************************************/
+/********************************************************************************************************************/
+/********************************************************************************************************************/
+class MedianFinder {
+public:
+    int n;
+    int n1=0,n2=0;
+    priority_queue<int> q1;
+    priority_queue<int,vector<int>,greater<int>> q2;
+    MedianFinder() {
+        this->n = 0;
+    }
+    
+    void addNum(int num) {
+        if(n1==0 || num<q1.top()){
+            q1.push(num);   n1++;
+        }else{
+            q2.push(num);   n2++;
+        }
+
+        // we have to maintain abs(n1-n2)<=1
+        if(n1-n2>1){
+            q2.push(q1.top());
+            q1.pop();
+            n1--; n2++;
+        } else if(n2-n1>1){
+            q1.push(q2.top());
+            q2.pop();
+            n1++; n2--;
+        }
+        n++;
+    }
+    
+    int findMedian() {
+        if(n1==0 && n2==0)  return -1;
+
+        if(n%2==0)  
+            return (q1.top()+q2.top())/2;
+        else
+            return (n1>n2) ? q1.top() : q2.top();
+    }
+};
